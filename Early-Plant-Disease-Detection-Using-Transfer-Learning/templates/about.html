@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - PlantCare AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav ul li {
+            display: inline-block;
+            margin-left: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        nav .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: transform 0.3s;
+        }
+
+        nav .btn:hover {
+            transform: scale(1.05);
+            color: white;
+        }
+
+        /* About Section */
+        .about-container {
+            max-width: 1100px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .about-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .about-header h1 {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .about-header p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        /* Project Info */
+        .project-info {
+            margin-bottom: 3rem;
+        }
+
+        .project-info h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .project-info p {
+            color: #555;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        /* Team Section */
+        .team-section {
+            margin-top: 3rem;
+        }
+
+        .team-section h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-member {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+        }
+
+        .team-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .team-member h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-member p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .team-lead {
+            border: 3px solid #667eea;
+        }
+
+        /* Technology Section */
+        .tech-section {
+            margin-top: 3rem;
+        }
+
+        .tech-section h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tech-item {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .tech-item h3 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-item p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Dataset Section */
+        .dataset-section {
+            margin-top: 3rem;
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+        }
+
+        .dataset-section h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .dataset-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .dataset-stat {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .dataset-stat h3 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .dataset-stat p {
+            color: #666;
+        }
+
+        /* Results Section */
+        .results-section {
+            margin-top: 3rem;
+        }
+
+        .results-section h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-card h3 {
+            margin-bottom: 1rem;
+        }
+
+        .result-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .result-card li {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .result-card li::before {
+            content: "✓ ";
+            font-weight: bold;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+        }
+
+        .cta-section h2 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.3s;
+            margin-top: 1rem;
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            background: #333;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .about-header h1 {
+                font-size: 2rem;
+            }
+
+            .about-card {
+                padding: 2rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul li {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li>
+                <a href="/" class="logo">
+                    🌿 PlantCare AI
+                </a>
+            </li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/how-it-works">How It Works</a></li>
+            <li><a href="/upload" class="btn">Detect Disease</a></li>
+        </ul>
+    </nav>
+
+    <!-- About Section -->
+    <div class="about-container">
+        <div class="about-card">
+            <div class="about-header">
+                <h1>🌿 About PlantCare AI</h1>
+                <p>Advanced Plant Disease Detection Using Transfer Learning</p>
+            </div>
+
+            <!-- Project Info -->
+            <div class="project-info">
+                <h2>📋 Project Overview</h2>
+                <p>
+                    PlantCare AI is an advanced machine learning project designed to detect and classify 
+                    plant diseases using deep learning techniques. The annual worldwide crop loss is 
+                    estimated at USD 220 billion due to plant diseases, making early detection crucial 
+                    for agricultural sustainability.
+                </p>
+                <p>
+                    This project utilizes <strong>MobileNetV2</strong>, a pre-trained convolutional neural 
+                    network (CNN), with transfer learning to accurately classify plant diseases. The model 
+                    has been trained on the New Plant Diseases Dataset containing over 87,000 annotated 
+                    plant leaf images across 38 distinct classes.
+                </p>
+                <p>
+                    Our system can identify diseases affecting major crops including Apple, Corn, Grape, 
+                    Potato, Tomato, and more, helping farmers and gardeners take timely action to protect 
+                    their plants and maximize yields.
+                </p>
+            </div>
+
+            <!-- Team Section -->
+            <div class="team-section">
+                <h2>👥 Our Team</h2>
+                <div class="team-grid">
+                    <div class="team-member team-lead">
+                        <div class="team-avatar">👩</div>
+                        <h3>Khushi Tomar</h3>
+                        <p>Team Lead</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-avatar">👩</div>
+                        <h3>Anushka Singhal</h3>
+                        <p>Member</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-avatar">👨</div>
+                        <h3>Kartik Agarwal</h3>
+                        <p>Member</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-avatar">👨</div>
+                        <h3>Prashant</h3>
+                        <p>Member</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technology Section -->
+            <div class="tech-section">
+                <h2>🛠️ Technology Stack</h2>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <h3>Python</h3>
+                        <p>Primary programming language</p>
+                    </div>
+                    <div class="tech-item">
+                        <h3>TensorFlow</h3>
+                        <p>Deep learning framework</p>
+                    </div>
+                    <div class="tech-item">
+                        <h3>Keras</h3>
+                        <p>Neural network API</p>
+                    </div>
+                    <div class="tech-item">
+                        <h3>MobileNetV2</h3>
+                        <p>Pre-trained CNN model</p>
+                    </div>
+                    <div class="tech-item">
+                        <h3>Flask</h3>
+                        <p>Web framework</p>
+                    </div>
+                    <div class="tech-item">
+                        <h3>HTML/CSS</h3>
+                        <p>Frontend development</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dataset Section -->
+            <div class="dataset-section">
+                <h2>📊 Dataset Information</h2>
+                <p>
+                    The model is trained on the New Plant Diseases Dataset from Kaggle, which contains 
+                    high-quality images of plant leaves affected by various diseases.
+                </p>
+                <div class="dataset-stats">
+                    <div class="dataset-stat">
+                        <h3>87K+</h3>
+                        <p>Total Images</p>
+                    </div>
+                    <div class="dataset-stat">
+                        <h3>38</h3>
+                        <p>Disease Classes</p>
+                    </div>
+                    <div class="dataset-stat">
+                        <h3>6+</h3>
+                        <p>Plant Types</p>
+                    </div>
+                    <div class="dataset-stat">
+                        <h3>4</h3>
+                        <p>Corn Diseases</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <h2>📈 Model Performance</h2>
+                <div class="result-card">
+                    <h3>🏆 Best Results (Unfrozen Ratio 0.75 with Threshold)</h3>
+                    <ul>
+                        <li>Training Accuracy: 99.59%</li>
+                        <li>Validation Accuracy: 92.13%</li>
+                        <li>Training Loss: 0.0149</li>
+                        <li>Validation Loss: 0.5535</li>
+                        <li>Average Epochs: 56.4</li>
+                    </ul>
+                </div>
+                <div class="result-card">
+                    <h3>🎯 Undersampling Best Model</h3>
+                    <ul>
+                        <li>Training Accuracy: 99.69%</li>
+                        <li>Validation Accuracy: 90.83%</li>
+                        <li>Training Loss: 0.0086</li>
+                        <li>Validation Loss: 0.7329</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="cta-section">
+                <h2>🚀 Ready to Detect Plant Diseases?</h2>
+                <p>Use our AI-powered system to identify plant diseases in seconds</p>
+                <a href="/upload" class="cta-btn">Start Detection Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>🌿 PlantCare AI - Early Plant Disease Detection</p>
+        <p>Powered by MobileNetV2 Transfer Learning</p>
+        <p>Team: Deep Mind | <a href="#">Contact Us</a></p>
+    </footer>
+</body>
+</html>

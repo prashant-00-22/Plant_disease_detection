@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result - PlantCare AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav ul li {
+            display: inline-block;
+            margin-left: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        nav .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: transform 0.3s;
+        }
+
+        nav .btn:hover {
+            transform: scale(1.05);
+            color: white;
+        }
+
+        /* Result Section */
+        .result-container {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .result-header h1 {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        /* Image Display */
+        .image-display {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .result-image {
+            max-width: 400px;
+            max-height: 400px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Main Result */
+        .main-result {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .main-result h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .disease-name {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .confidence {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            max-width: 300px;
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: white;
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+        }
+
+        /* All Predictions */
+        .all-predictions {
+            margin-top: 2rem;
+        }
+
+        .all-predictions h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .prediction-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .prediction-item.main {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .prediction-name {
+            font-weight: 500;
+        }
+
+        .prediction-value {
+            font-weight: bold;
+        }
+
+        .mini-bar {
+            width: 100px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-left: 1rem;
+            overflow: hidden;
+        }
+
+        .prediction-item.main .mini-bar {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .mini-bar-fill {
+            height: 100%;
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        .prediction-item.main .mini-bar-fill {
+            background: white;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Recommendations */
+        .recommendations {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f0f4ff;
+            border-radius: 15px;
+        }
+
+        .recommendations h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .recommendations ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .recommendations li {
+            color: #555;
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .recommendations li::before {
+            content: "•";
+            color: #667eea;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Healthy vs Diseased */
+        .status-healthy {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%) !important;
+        }
+
+        .status-diseased {
+            background: linear-gradient(135deg, #f44336 0%, #c62828 100%) !important;
+        }
+
+        /* Footer */
+        footer {
+            background: #333;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .result-card {
+                padding: 2rem;
+            }
+
+            .result-header h1 {
+                font-size: 2rem;
+            }
+
+            .disease-name {
+                font-size: 1.8rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li>
+                <a href="/" class="logo">
+                    🌿 PlantCare AI
+                </a>
+            </li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/how-it-works">How It Works</a></li>
+            <li><a href="/upload" class="btn">Detect Disease</a></li>
+        </ul>
+    </nav>
+
+    <!-- Result Section -->
+    <div class="result-container">
+        <div class="result-card">
+            <div class="result-header">
+                <h1>🔍 Analysis Results</h1>
+            </div>
+
+            <!-- Image Display -->
+            <div class="image-display">
+                <img src="{{ url_for('static', filename='uploads/' + image) }}" alt="Uploaded Plant Image" class="result-image">
+            </div>
+
+            <!-- Main Result -->
+            <div class="main-result {% if disease == 'Healthy' %}status-healthy{% else %}status-diseased{% endif %}">
+                <h2>Detected Condition:</h2>
+                <div class="disease-name">
+                    {% if disease == 'Healthy' %}
+                        ✅ {{ disease }}
+                    {% else %}
+                        ⚠️ {{ disease }}
+                    {% endif %}
+                </div>
+                <div class="confidence">
+                    Confidence: {{ "%.2f"|format(confidence) }}%
+                </div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" style="width: {{ confidence }}%"></div>
+                </div>
+            </div>
+
+            <!-- All Predictions -->
+            <div class="all-predictions">
+                <h3>📊 All Predictions</h3>
+                {% for disease_name, prob in all_predictions.items() %}
+                <div class="prediction-item {% if loop.first %}main{% endif %}">
+                    <span class="prediction-name">{{ disease_name }}</span>
+                    <div style="display: flex; align-items: center;">
+                        <span class="prediction-value">{{ "%.2f"|format(prob) }}%</span>
+                        <div class="mini-bar">
+                            <div class="mini-bar-fill" style="width: {{ prob }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Recommendations -->
+            <div class="recommendations">
+                <h3>💡 Recommendations</h3>
+                <ul>
+                    {% if disease == 'Healthy' %}
+                        <li>Your plant appears to be healthy! Continue with regular care.</li>
+                        <li>Monitor the plant regularly for any changes in leaf color or texture.</li>
+                        <li>Maintain proper watering and sunlight conditions for optimal growth.</li>
+                        <li>Consider periodic inspections to catch any issues early.</li>
+                    {% else %}
+                        <li>Isolate the affected plant from other plants to prevent disease spread.</li>
+                        <li>Remove and properly dispose of severely affected leaves.</li>
+<li>Apply appropriate fungicide or treatment recommended for {{ disease }}</li>
+                        <li>Improve air circulation around the plant.</li>
+                        <li>Avoid overhead watering to keep leaves dry.</li>
+                        <li>Monitor nearby plants for similar symptoms.</li>
+                        <li>Consider consulting a plant pathologist for severe cases.</li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="/upload" class="btn-primary">🔄 Analyze Another Image</a>
+                <a href="/" class="btn-secondary">🏠 Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>🌿 PlantCare AI - Early Plant Disease Detection</p>
+        <p>Powered by MobileNetV2 Transfer Learning</p>
+        <p>Team: Deep Mind | <a href="#">Contact Us</a></p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image - PlantCare AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav ul li {
+            display: inline-block;
+            margin-left: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        nav .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: transform 0.3s;
+        }
+
+        nav .btn:hover {
+            transform: scale(1.05);
+            color: white;
+        }
+
+        /* Upload Section */
+        .upload-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .upload-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .upload-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .upload-header h1 {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .upload-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .upload-area:hover {
+            background: #f0f4ff;
+            border-color: #764ba2;
+        }
+
+        .upload-area.dragover {
+            background: #e8ecff;
+            border-color: #764ba2;
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-area h2 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-area p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .upload-area .formats {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        /* File Input */
+        #file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Preview Section */
+        .preview-section {
+            display: none;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .preview-section.active {
+            display: block;
+        }
+
+        .preview-image {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 1rem;
+        }
+
+        .preview-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .preview-info h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-info p {
+            color: #666;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 3rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Tips Section */
+        .tips-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f0f4ff;
+            border-radius: 10px;
+        }
+
+        .tips-section h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .tips-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .tips-section li {
+            color: #555;
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .tips-section li::before {
+            content: "✓";
+            color: #667eea;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 1rem;
+        }
+
+        .flash {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .flash.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+
+        .flash.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        /* Footer */
+        footer {
+            background: #333;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .upload-card {
+                padding: 2rem;
+            }
+
+            .upload-header h1 {
+                font-size: 2rem;
+            }
+
+            .upload-area {
+                padding: 2rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul li {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li>
+                <a href="/" class="logo">
+                    🌿 PlantCare AI
+                </a>
+            </li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/how-it-works">How It Works</a></li>
+            <li><a href="/upload" class="btn">Detect Disease</a></li>
+        </ul>
+    </nav>
+
+    <!-- Upload Section -->
+    <div class="upload-container">
+        <div class="upload-card">
+            <div class="upload-header">
+                <h1>📤 Upload Plant Image</h1>
+                <p>Upload a clear photo of your plant leaf for disease detection</p>
+            </div>
+
+            <!-- Flash Messages -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash {{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- Upload Form -->
+            <form method="POST" enctype="multipart/form-data" id="upload-form">
+                <!-- Upload Area -->
+                <div class="upload-area" id="upload-area">
+                    <input type="file" name="file" id="file-input" accept="image/*" required>
+                    <div class="upload-icon">🌿</div>
+                    <h2>Drag & Drop Your Image Here</h2>
+                    <p>or click to browse files</p>
+                    <p class="formats">Supported formats: JPG, PNG, JPEG, GIF, BMP, WebP</p>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="preview-section" id="preview-section">
+                    <img src="" alt="Preview" class="preview-image" id="preview-image">
+                    <div class="preview-info">
+                        <h3 id="file-name"></h3>
+                        <p id="file-size"></p>
+                    </div>
+                    <button type="submit" class="submit-btn" id="submit-btn">
+                        🔍 Detect Disease
+                    </button>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Analyzing your plant image...</p>
+                    <p style="color: #666; font-size: 0.9rem;">This may take a few seconds</p>
+                </div>
+            </form>
+
+            <!-- Tips Section -->
+            <div class="tips-section">
+                <h3>📷 Tips for Best Results</h3>
+                <ul>
+                    <li>Use good lighting - natural daylight works best</li>
+                    <li>Take a close-up photo of the affected leaf</li>
+                    <li>Make sure the image is clear and not blurry</li>
+                    <li>Include both healthy and diseased parts of the leaf</li>
+                    <li>Avoid shadows and reflections on the image</li>
+                    <li>Use a solid background for better contrast</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>🌿 PlantCare AI - Early Plant Disease Detection</p>
+        <p>Powered by MobileNetV2 Transfer Learning</p>
+        <p>Team: Deep Mind | <a href="#">Contact Us</a></p>
+    </footer>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const uploadArea = document.getElementById('upload-area');
+        const previewSection = document.getElementById('preview-section');
+        const previewImage = document.getElementById('preview-image');
+        const fileName = document.getElementById('file-name');
+        const fileSize = document.getElementById('file-size');
+        const submitBtn = document.getElementById('submit-btn');
+        const uploadForm = document.getElementById('upload-form');
+        const loading = document.getElementById('loading');
+
+        // File input change handler
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    fileName.textContent = file.name;
+                    
+                    // Format file size
+                    const size = file.size;
+                    let sizeText = '';
+                    if (size < 1024) {
+                        sizeText = size + ' bytes';
+                    } else if (size < 1024 * 1024) {
+                        sizeText = (size / 1024).toFixed(2) + ' KB';
+                    } else {
+                        sizeText = (size / (1024 * 1024)).toFixed(2) + ' MB';
+                    }
+                    fileSize.textContent = 'Size: ' + sizeText;
+                    
+                    previewSection.classList.add('active');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                fileInput.files = e.dataTransfer.files;
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            }
+        });
+
+        // Form submit handler
+        uploadForm.addEventListener('submit', function() {
+            loading.classList.add('active');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+        });
+    </script>
+</body>
+</html>

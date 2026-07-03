@@ -1,0 +1,32 @@
+# Flask Web Application Dependencies
+flask==3.0.0
+werkzeug==3.0.1
+
+# Image Processing
+pillow==10.1.0
+
+# TensorFlow for Deep Learning
+tensorflow==2.15.0
+
+# Numerical Computing
+numpy==1.24.3
+
+# Scientific Computing
+scipy==1.11.4
+
+# For Jupyter notebook support (optional)
+jupyter==1.0.0
+ipython==8.18.1
+
+# For model saving/loading (optional)
+h5py==3.10.0
+
+# For data visualization (optional)
+matplotlib==3.8.2
+
+# For data preprocessing (optional)
+scikit-learn==1.3.2
+pandas==2.1.4
+
+# Development tools (optional)
+python-dotenv==1.0.0
