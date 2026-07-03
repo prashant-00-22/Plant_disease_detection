@@ -47,24 +47,51 @@ PLANT_CLASSES = ['Apple', 'Blueberry', 'Cherry', 'Corn', 'Grape', 'Orange',
                  'Peach', 'Pepper', 'Potato', 'Raspberry', 'Soybean', 
                  'Squash', 'Strawberry', 'Tomato']
 
-# Global model variable
+# Global model variable (loaded lazily / safely)
 model = None
+model_load_attempted = False
+model_load_error = None
+
 
 def load_model():
-    """Load the trained model"""
-    global model
+    """Load the trained model safely.
+
+    Requirement: server must never crash on startup due to missing TensorFlow/model.
+    """
+    global model, model_load_attempted, model_load_error
+
+    # Prevent repeated expensive attempts
+    if model_load_attempted:
+        return
+
+    model_load_attempted = True
+    model_load_error = None
+
     try:
-        if os.path.exists(MODEL_PATH):
-            model = tf.keras.models.load_model(MODEL_PATH)
-            print("Model loaded successfully!")
-        else:
+        # TensorFlow might not be importable in this environment
+        if tf is None:
+            raise RuntimeError("TensorFlow is not available (tf import failed).")
+
+        if not os.path.exists(MODEL_PATH):
             print(f"Model not found at {MODEL_PATH}")
-            print("Please train the model first or place the model file in the models folder")
-            # Create a placeholder model for demonstration
-            model = create_demo_model()
+            raise FileNotFoundError(
+                f"Model file missing at {MODEL_PATH}. Please place the model in the models folder."
+            )
+
+        model = tf.keras.models.load_model(MODEL_PATH)
+        print("Model loaded successfully!")
     except Exception as e:
+        # Log actual exception for debugging
+        model_load_error = repr(e)
         print(f"Error loading model: {e}")
-        model = create_demo_model()
+        print("--- load_model exception traceback follows ---")
+        import traceback
+
+        traceback.print_exc()
+
+        # Keep server running; prediction will return JSON error
+        model = None
+
 
 def create_demo_model():
     """Create a demo model for testing when no trained model is available"""
@@ -105,56 +132,80 @@ def allowed_file(filename):
 
 def preprocess_image(image_path):
     """Preprocess image for model prediction"""
+    global tf
+
+    if tf is None:
+        print("preprocess_image: TensorFlow is not available")
+        return None
+
     try:
         # Load and resize image
         img = Image.open(image_path)
         img = img.convert('RGB')  # Ensure RGB mode
         img = img.resize((224, 224))
-        
+
         # Convert to array
         img_array = np.array(img)
-        
+
         # Preprocess for MobileNetV2
         img_array = tf.keras.applications.mobilenet_v2.preprocess_input(img_array)
-        
+
         # Expand dimensions to match model input
         img_array = np.expand_dims(img_array, axis=0)
-        
+
         return img_array
     except Exception as e:
+        # Log actual exception for debugging
         print(f"Error preprocessing image: {e}")
+        import traceback
+        traceback.print_exc()
         return None
 
+
 def predict_disease(image_path):
-    """Predict disease from the image"""
+    """Predict disease from the image.
+
+    If model is unavailable, this function returns (None, None, 0) and logs.
+    """
+    global model
+
+    if model is None:
+        # Model unavailable - do not crash
+        print("predict_disease: model is unavailable (model is None)")
+        return None, None, 0
+
     try:
         # Preprocess image
         processed_img = preprocess_image(image_path)
-        
+
         if processed_img is None:
             return None, None, 0
-        
+
         # Make prediction
         predictions = model.predict(processed_img, verbose=0)
-        
+
         # Get the predicted class
         predicted_class = np.argmax(predictions[0])
         confidence = predictions[0][predicted_class]
-        
+
         # Get disease name
         disease_name = DISEASE_CLASSES.get(predicted_class, "Unknown")
-        
+
         # Get all class probabilities
         all_predictions = {
-            DISEASE_CLASSES[i]: float(predictions[0][i]) * 100 
+            DISEASE_CLASSES[i]: float(predictions[0][i]) * 100
             for i in range(len(predictions[0]))
         }
-        
+
         return disease_name, all_predictions, float(confidence) * 100
-        
     except Exception as e:
+        # Log actual exception for debugging
         print(f"Error predicting disease: {e}")
+        import traceback
+
+        traceback.print_exc()
         return None, None, 0
+
 
 # ==================== ROUTES ====================
 
@@ -200,24 +251,31 @@ def upload():
 def result():
     """Result page - displays prediction results"""
     image_name = request.args.get('image')
-    
+
     if not image_name:
         flash('No image provided', 'error')
         return redirect(url_for('upload'))
-    
+
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_name)
-    
+
     if not os.path.exists(image_path):
         flash('Image not found', 'error')
         return redirect(url_for('upload'))
-    
+
     # Make prediction
     disease_name, all_predictions, confidence = predict_disease(image_path)
-    
+
     if disease_name is None:
+        # If the model is unavailable, return a clear JSON error (HTTP 500)
+        if model is None:
+            return {
+                "error": "Model unavailable",
+                "message": "The prediction model could not be loaded. Please train the model and place it at models/plant_disease_model.h5, or reinstall dependencies.",
+            }, 500
+
         flash('Error processing image', 'error')
         return redirect(url_for('upload'))
-    
+
     return render_template(
         'result.html',
         image=image_name,
@@ -225,6 +283,7 @@ def result():
         confidence=confidence,
         all_predictions=all_predictions
     )
+
 
 @app.route('/how-it-works')
 def how_it_works():
@@ -246,10 +305,17 @@ def internal_server_error(e):
 # ==================== MAIN ====================
 
 if __name__ == '__main__':
-    # Load model on startup
-    load_model()
+    # Load model on startup (must not crash the server)
+    try:
+        load_model()
+    except Exception as e:
+        # Log exception and continue serving pages
+        import traceback
+        print(f"Startup model loading failed: {e}")
+        traceback.print_exc()
     
     # Run the app
+
     print("=" * 50)
     print("Plant Disease Detection System")
     print("=" * 50)
